@@ -1,7 +1,10 @@
 import { Component } from "react";
-import Tutors from "./components/Tutors.jsx";
+import Tutors from "./components/Tutors/Tutors.jsx";
 import "./App.css";
-import AddTutor from "./components/AddTutor.jsx";
+import AddTutor from "./components/Tutors/AddTutor/AddTutor.jsx";
+import Sidebar from "./components/Sidebar/Sidebar.component.jsx";
+import University from "./components/University/University.component.jsx";
+import Button from "./components/buttons/Button.jsx";
 
 class App extends Component {
   state = {
@@ -25,27 +28,33 @@ class App extends Component {
 
     return (
       <main className="App">
-        <Tutors list={this.tutors} />
+        <Sidebar />
+        <section className="container">
+          <University />
+          <Tutors list={this.tutors} />
 
-        {isTutorAddPanelVisible && (
-          <AddTutor
-            hideForm={() =>
-              this.setState({
-                isTutorAddPanelVisible: false,
-              })
-            }
-          />
-        )}
+          {isTutorAddPanelVisible && (
+            <AddTutor
+              hideForm={() =>
+                this.setState({
+                  isTutorAddPanelVisible: false,
+                })
+              }
+            />
+          )}
 
-        <button
-          onClick={() =>
-            this.setState({
-              isTutorAddPanelVisible: true,
-            })
-          }
-        >
-          Add Tutor
-        </button>
+          <div className={"mt-16"}>
+            <Button
+              action={() =>
+                this.setState({
+                  isTutorAddPanelVisible: true,
+                })
+              }
+            >
+              Add Tutor
+            </Button>
+          </div>
+        </section>
       </main>
     );
   }

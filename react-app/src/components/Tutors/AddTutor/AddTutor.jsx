@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import styles from "./AddTutor.module.css";
+import Button from "../../buttons/Button";
 
 export default class AddTutor extends Component {
   handleSubmit = () => {
@@ -17,9 +18,9 @@ export default class AddTutor extends Component {
         <input type="email" placeholder="Email" required />
         <input type="text" placeholder="City" required />
 
-        <button type="submit" onClick={this.handleSubmit}>
+        <Button className={"mt-16"} action={this.handleSubmit}>
           Invite
-        </button>
+        </Button>
       </form>
     );
   }

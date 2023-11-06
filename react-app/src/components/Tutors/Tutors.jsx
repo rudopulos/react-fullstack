@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import styles from "./Tutors.module.css";
+import Icon from "../icons/Icon";
 
 class Tutors extends Component {
   renderList = (items) => {
@@ -23,7 +24,17 @@ class Tutors extends Component {
   render() {
     const { list } = this.props;
 
-    return <div className={styles.tutorsList}>{this.renderList(list)}</div>;
+    return (
+      <section className="section">
+        <h1>
+          <Icon variant="cat" label="Tutors" />
+          <span>Tutors</span>
+        </h1>
+        <div className={`box ${styles.tutorsList}`}>
+          {this.renderList(list)}
+        </div>
+      </section>
+    );
 
     // return (
     //   <div className={styles.tutorsList}>
