@@ -1,0 +1,13 @@
+.citiesList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.citiesListItem {
+  display: flex;
+  width: 370px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+}
