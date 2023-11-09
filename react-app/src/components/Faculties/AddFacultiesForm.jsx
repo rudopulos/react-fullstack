@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import Button from "../buttons/Button";
+import Button from "../common/Button/Button";
 import PropTypes from "prop-types";
 
 export default class AddFacultiesForm extends Component {

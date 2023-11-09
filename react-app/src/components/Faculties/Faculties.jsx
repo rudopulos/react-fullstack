@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import styles from "./Faculties.module.css";
-import Icon from "../icons/Icon";
-import Button from "../buttons/Button";
+import Icon from "../common/Icon/Icon";
+import Button from "../common/Button/Button";
 import { HiDotsVertical } from "react-icons/hi";
 import AddFacultiesForm from "./AddFacultiesForm";
 
@@ -25,10 +25,10 @@ class Faculties extends Component {
 
     return (
       <section className="section">
-        <h1>
+        <h2>
           <Icon variant="robot" label="Faculties" />
           <span>Faculties</span>
-        </h1>
+        </h2>
         <div className={`${styles.facultiesList}`}>
           {list.map((item) => (
             <div key={item.id} className={`box ${styles.facultiesListItem}`}>
@@ -64,35 +64,16 @@ class Faculties extends Component {
         ? this.state.list[this.state.list.length - 1].id
         : 0;
 
-    const tutorToAdd = {
+    const itemToAdd = {
       id: newId,
       name: data.faculty,
     };
 
-    this.setState({
-      list: [...this.state.list, tutorToAdd],
-      isAddFormVisible: false,
-    });
-  };
-
-  // Render the list of tutors
-  renderList = (items) => {
-    return items.map((el) => {
-      const name = `${el.firstName} ${el.lastName}`;
-
-      return (
-        <>
-          <div key={el.id} className={styles.tutorsListItem}>
-            <div>{name}</div>
-            <div className={styles.address}>
-              <span>{el.email}</span>
-              <span>{el.telephone}</span>
-              <span>{el.location}</span>
-            </div>
-            <div>{el.role}</div>
-          </div>
-        </>
-      );
+    this.setState((prevState) => {
+      return {
+        list: [...prevState.list, itemToAdd],
+        isAddFormVisible: false,
+      };
     });
   };
 }

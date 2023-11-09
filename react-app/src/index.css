@@ -16,13 +16,7 @@ code {
   margin-top: 32px;
 }
 
-.section h1 {
-  font-family: Montserrat;
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 24px;
-  letter-spacing: 1.25px;
-  text-align: left;
+.section h2 {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -30,6 +24,10 @@ code {
 
 .box {
   background: white;
+}
+
+.box--no-items {
+  padding: 16px;
 }
 
 .box:hover {
@@ -51,69 +49,57 @@ code {
   gap: 8px;
   margin: 16px 0;
   padding: 16px;
+  text-align: left;
+}
+
+.form label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.form label span {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
+  letter-spacing: 0px;
+  text-align: left;
 }
 
 .form input {
   padding: 8px 16px;
   max-width: 300px;
+  border: 1px solid #424242;
+  outline: none;
 }
 
 .form button {
   width: 200px;
 }
 
-.form label {
-  display: grid;
-  grid-template-columns: 150px 1fr;
-  align-items: center;
+.form label:has(*:required) span::after {
+  content: "*";
+  color: #e53935;
 }
 
-.dropdown-toggle {
-  width: 20px;
-  height: 20px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  padding: 4px;
+.modal-form {
+  width: 496px;
+  margin: 0 auto;
 }
 
-.dropdown-toggle:hover {
-  background: rgb(182, 182, 182);
-}
-
-.dropdown-options {
-  position: absolute;
-  box-shadow: 0px 4px 10px 0px #00000040;
-  top: 48px;
-  right: 16px;
-  z-index: 100;
-  background: white;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
+.modal-form input {
+  max-width: 100%;
 }
 
 .relative {
   position: relative;
 }
 
-.modal {
-  height: 100vh;
-  width: 100vw;
-  position: fixed;
-  top: 0;
-  left: 0;
-  display: flex;
-  align-items: center;
-  background: rgba(56, 56, 56, 0.5);
-  justify-content: center;
-  z-index: 200;
-}
-
-.modal-content {
-  width: 500px;
-  height: 300px;
-  background: white;
+h2 {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 24px;
+  letter-spacing: 1.25px;
+  text-align: left;
+  text-transform: uppercase;
 }

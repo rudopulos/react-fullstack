@@ -1,16 +1,22 @@
 import React, { Component } from "react";
 import styles from "./Cities.module.css";
-import Icon from "../icons/Icon";
-import Button from "../buttons/Button";
+import Icon from "../common/Icon/Icon";
+import Button from "../common/Button/Button";
 import AddCitiesForm from "./AddCitiesForm";
-import Dropdown from "./Dropdown";
+import Dropdown from "../common/Dropdown/Dropdown";
+import Modal from "../common/Modal/Modal";
+import ErrorAlert from "../common/ErrorAlert";
+import AlternateButton from "../common/Button/AlternateButton";
 
 class Cities extends Component {
   state = {
     isAddFormVisible: false,
-    modal: {
-      isOpen: false,
-      content: <></>,
+    isEditModalOpen: false,
+    isDeleteModalOpen: false,
+    errors: "",
+    selectedCity: {
+      id: 0,
+      name: "",
     },
     list: [
       {
@@ -25,40 +31,99 @@ class Cities extends Component {
   };
 
   render() {
-    const { isAddFormVisible, list } = this.state;
-    const { isOpen, modalContent } = this.state.modal;
+    const {
+      isAddFormVisible,
+      list,
+      errors,
+      isEditModalOpen,
+      isDeleteModalOpen,
+      selectedCity,
+    } = this.state;
 
     return (
       <section className="section">
-        <code>{JSON.stringify(this.state)}</code>
-        <h1>
+        <h2>
           <Icon variant="pin" label="Cities" />
           <span>Cities</span>
-        </h1>
-        <div className={`${styles.citiesList}`}>
-          {list.map((city) => (
-            <div
-              key={city.id}
-              className={`box relative ${styles.citiesListItem}`}
-            >
-              <span>{city.name}</span>
-              <Dropdown
-                cityId={city.id}
-                onEdit={() => this.handleEditCity(city)}
-              />
+        </h2>
+        <div className={`${styles.citiesList}`}>{this.renderList(list)}</div>
+
+        {isEditModalOpen && (
+          <Modal
+            isOpen={isEditModalOpen}
+            handleClose={() => {
+              this.setState({ isEditModalOpen: false });
+            }}
+            header={{
+              icon: <Icon variant={"pencil"} size={40} />,
+              label: "Edit city information",
+            }}
+          >
+            <form className={`form modal-form`}>
+              <label>
+                <span>City</span>
+                <input
+                  type="text"
+                  required
+                  value={selectedCity.name}
+                  onChange={(e) =>
+                    this.setState((prevState) => {
+                      return {
+                        ...prevState,
+                        selectedCity: {
+                          ...prevState.selectedCity,
+                          name: e.target.value,
+                        },
+                      };
+                    })
+                  }
+                ></input>
+              </label>
+              <Button action={() => this.handleEditCity(selectedCity)}>
+                SAVE
+              </Button>
+            </form>
+          </Modal>
+        )}
+        {isDeleteModalOpen && (
+          <Modal
+            isOpen={isDeleteModalOpen}
+            handleClose={() => {
+              this.setState({ isEditModalOpen: false });
+            }}
+            header={{
+              icon: <Icon variant={"handpointing"} size={40} />,
+              label: "Faculty Removal",
+            }}
+          >
+            <div>
+              All materials and information about the faculty will be deleted
             </div>
-          ))}
-        </div>
-        {isOpen ? "True" : "False"}
-        {isOpen && (
-          <div className="modal">
-            <div className="modal-content">Test {modalContent}</div>
-          </div>
+            <div className={styles.deleteModalControls}>
+              <AlternateButton
+                action={() =>
+                  this.setState((prevState) => {
+                    return {
+                      ...prevState,
+                      isDeleteModalOpen: false,
+                    };
+                  })
+                }
+              >
+                No
+              </AlternateButton>
+              <Button action={() => this.handleDeleteCity(selectedCity)}>
+                Yes
+              </Button>
+            </div>
+          </Modal>
         )}
 
         {isAddFormVisible && (
           <AddCitiesForm onFormSubmit={this.handleAddCity} />
         )}
+
+        {errors.length > 0 && <ErrorAlert errors={errors} />}
 
         <div className={"mt-16"}>
           <Button
@@ -75,72 +140,116 @@ class Cities extends Component {
     );
   }
 
-  handleEditCity = (data) => {
-    console.log("Set modal open");
-    this.setState({
-      ...this.state,
-      modal: {
-        ...this.state.modal,
-        isOpen: true,
-        modalContent: (
-          <form>
-            Orasul editat are id-ul {data.id} si numele {data.name}{" "}
-            <button
-              onClick={() => {
-                this.setState({
-                  modal: {
-                    isOpen: false,
-                    modalContent: <></>,
-                  },
-                });
-              }}
-            >
-              Close Modal
-            </button>
-          </form>
-        ),
-      },
+  handleEditCity = (editedCity) => {
+    const yourNextList = [...this.state.list];
+
+    if (yourNextList.find((el) => el.name === editedCity.name)) {
+      this.setState({
+        errors: "A city with the same name already exists.",
+      });
+
+      return;
+    }
+
+    const city = yourNextList.find((el) => el.id === editedCity.id);
+    city.name = editedCity.name;
+    this.setState((prevState) => {
+      return {
+        ...prevState,
+        errors: "",
+        isEditModalOpen: false,
+        list: yourNextList,
+      };
+    });
+  };
+
+  handleDeleteCity = (selectedCity) => {
+    const yourNextList = this.state.list.filter(
+      (el) => el.id !== selectedCity.id
+    );
+
+    this.setState((prevState) => {
+      return {
+        ...prevState,
+        errors: "",
+        isDeleteModalOpen: false,
+        list: yourNextList,
+      };
+    });
+  };
+
+  showEditModal = (data) => {
+    this.setState((prevState) => {
+      return {
+        ...prevState,
+        isEditModalOpen: true,
+        selectedCity: {
+          id: data.id,
+          name: data.name,
+        },
+      };
+    });
+  };
+
+  showDeleteModal = (data) => {
+    this.setState((prevState) => {
+      return {
+        ...prevState,
+        isDeleteModalOpen: true,
+        selectedCity: {
+          id: data.id,
+          name: data.name,
+        },
+      };
     });
   };
 
   // handle add city
-  handleAddCity = (data) => {
-    const newId =
-      this.state.list.length > 0
-        ? this.state.list[this.state.list.length - 1].id
-        : 0;
+  handleAddCity = (addedCity) => {
+    const list = this.state.list.sort((a, b) => a.id > b.id);
 
-    const tutorToAdd = {
+    if (list.find((el) => el.name === addedCity.name)) {
+      this.setState({
+        errors: "A city with the same name already exists.",
+      });
+
+      return;
+    }
+
+    const newId = list.length > 0 ? list[list.length - 1].id : 0;
+
+    const itemToAdd = {
       id: newId,
-      name: data.city,
+      name: addedCity.name,
     };
 
-    this.setState({
-      list: [...this.state.list, tutorToAdd],
-      isAddFormVisible: false,
+    this.setState((prevState) => {
+      return {
+        errors: "",
+        list: [...prevState.list, itemToAdd],
+        isAddFormVisible: false,
+      };
     });
   };
 
-  // Render the list of tutors
-  renderList = (items) => {
-    return items.map((el) => {
-      const name = `${el.firstName} ${el.lastName}`;
-
+  renderList(list) {
+    if (!list || list.length === 0) {
       return (
-        <>
-          <div key={el.id} className={styles.tutorsListItem}>
-            <div>{name}</div>
-            <div className={styles.address}>
-              <span>{el.email}</span>
-              <span>{el.telephone}</span>
-              <span>{el.location}</span>
-            </div>
-            <div>{el.role}</div>
-          </div>
-        </>
+        <div className="box box--no-items">There are no cities added.</div>
       );
-    });
-  };
+    }
+
+    return list.map((city) => (
+      <div key={city.id} className={`box relative ${styles.citiesListItem}`}>
+        <span>{city.name}</span>
+        <Dropdown
+          cityId={city.id}
+          onEdit={() => this.showEditModal(city)}
+          onDelete={() => this.showDeleteModal(city)}
+        />
+      </div>
+    ));
+  }
 }
 
 export default Cities;

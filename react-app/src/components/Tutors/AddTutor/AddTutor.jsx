@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import Button from "../../buttons/Button";
+import Button from "../../common/Button/Button";
 import PropTypes from "prop-types";
 
 export default class AddTutor extends Component {
@@ -15,7 +15,6 @@ export default class AddTutor extends Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Am adaugat un profesor");
     this.props.onFormSubmit(this.state);
   };
 

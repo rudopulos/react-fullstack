@@ -2,14 +2,14 @@
 import { css } from "@emotion/react";
 import PropTypes from "prop-types";
 
-function Button({ children, action, type = "button" }) {
-  const color = "#ff6b0a";
-  const hoverColor = "#b34d0b";
+function AlternateButton({ children, action, type = "button" }) {
+  const color = "#bdbdbd";
+  const hoverColor = "#a19d9d";
 
   const style = css`
     padding: 8px 16px;
     background-color: ${color};
-    font-family: Montserrat;
+
     font-size: 14px;
     font-weight: 700;
     line-height: 24px;
@@ -34,10 +34,10 @@ function Button({ children, action, type = "button" }) {
   );
 }
 
-Button.propTypes = {
+AlternateButton.propTypes = {
   children: PropTypes.any,
   action: PropTypes.func,
   button: PropTypes.string,
 };
 
-export default Button;
+export default AlternateButton;

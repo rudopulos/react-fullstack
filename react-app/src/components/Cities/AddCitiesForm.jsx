@@ -1,12 +1,12 @@
 import React, { Component } from "react";
-import Button from "../buttons/Button";
+import Button from "../common/Button/Button";
 import PropTypes from "prop-types";
 
 export default class AddCitiesForm extends Component {
   static propTypes = { onFormSubmit: PropTypes.func };
 
   state = {
-    city: "",
+    name: "",
   };
 
   handleSubmit = (e) => {
@@ -18,11 +18,11 @@ export default class AddCitiesForm extends Component {
   handleChange = (evt) => {
     const { value } = evt.target;
 
-    this.setState({ city: value });
+    this.setState({ name: value });
   };
 
   render() {
-    const { city } = this.state;
+    const { name } = this.state;
 
     return (
       <form className="form" onSubmit={this.handleSubmit}>
@@ -30,8 +30,8 @@ export default class AddCitiesForm extends Component {
         <label>
           <span>City Name</span>
           <input
-            value={city}
-            name="city"
+            value={name}
+            name="name"
             type="text"
             placeholder="City"
             onChange={this.handleChange}
