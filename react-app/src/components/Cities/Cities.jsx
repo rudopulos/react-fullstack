@@ -14,18 +14,18 @@ class Cities extends Component {
     isEditModalOpen: false,
     isDeleteModalOpen: false,
     errors: "",
-    selectedCity: {
+    selectedItem: {
       id: 0,
       name: "",
     },
     list: [
       {
         id: 0,
-        name: "New York",
+        name: "San Francisco",
       },
       {
         id: 1,
-        name: "San Francisco",
+        name: "New York",
       },
     ],
   };
@@ -37,7 +37,7 @@ class Cities extends Component {
       errors,
       isEditModalOpen,
       isDeleteModalOpen,
-      selectedCity,
+      selectedItem,
     } = this.state;
 
     return (
@@ -46,7 +46,7 @@ class Cities extends Component {
           <Icon variant="pin" label="Cities" />
           <span>Cities</span>
         </h2>
-        <div className={`${styles.citiesList}`}>{this.renderList(list)}</div>
+        <div className={`${styles.itemsList}`}>{this.renderList(list)}</div>
 
         {isEditModalOpen && (
           <Modal
@@ -65,13 +65,13 @@ class Cities extends Component {
                 <input
                   type="text"
                   required
-                  value={selectedCity.name}
+                  value={selectedItem.name}
                   onChange={(e) =>
                     this.setState((prevState) => {
                       return {
                         ...prevState,
-                        selectedCity: {
-                          ...prevState.selectedCity,
+                        selectedItem: {
+                          ...prevState.selectedItem,
                           name: e.target.value,
                         },
                       };
@@ -79,7 +79,7 @@ class Cities extends Component {
                   }
                 ></input>
               </label>
-              <Button action={() => this.handleEditCity(selectedCity)}>
+              <Button action={() => this.handleEditItem(selectedItem)}>
                 SAVE
               </Button>
             </form>
@@ -93,11 +93,11 @@ class Cities extends Component {
             }}
             header={{
               icon: <Icon variant={"handpointing"} size={40} />,
-              label: "Faculty Removal",
+              label: "City Removal",
             }}
           >
             <div>
-              All materials and information about the faculty will be deleted
+              All materials and information about the city will be deleted
             </div>
             <div className={styles.deleteModalControls}>
               <AlternateButton
@@ -112,7 +112,7 @@ class Cities extends Component {
               >
                 No
               </AlternateButton>
-              <Button action={() => this.handleDeleteCity(selectedCity)}>
+              <Button action={() => this.handleDeleteItem(selectedItem)}>
                 Yes
               </Button>
             </div>
@@ -120,7 +120,7 @@ class Cities extends Component {
         )}
 
         {isAddFormVisible && (
-          <AddCitiesForm onFormSubmit={this.handleAddCity} />
+          <AddCitiesForm onFormSubmit={this.handleAddItem} />
         )}
 
         {errors.length > 0 && <ErrorAlert errors={errors} />}
@@ -140,10 +140,10 @@ class Cities extends Component {
     );
   }
 
-  handleEditCity = (editedCity) => {
+  handleEditItem = (editedItem) => {
     const yourNextList = [...this.state.list];
 
-    if (yourNextList.find((el) => el.name === editedCity.name)) {
+    if (yourNextList.find((el) => el.name === editedItem.name)) {
       this.setState({
         errors: "A city with the same name already exists.",
       });
@@ -151,8 +151,9 @@ class Cities extends Component {
       return;
     }
 
-    const city = yourNextList.find((el) => el.id === editedCity.id);
-    city.name = editedCity.name;
+    const item = yourNextList.find((el) => el.id === editedItem.id);
+    item.name = editedItem.name;
+
     this.setState((prevState) => {
       return {
         ...prevState,
@@ -163,10 +164,8 @@ class Cities extends Component {
     });
   };
 
-  handleDeleteCity = (selectedCity) => {
-    const yourNextList = this.state.list.filter(
-      (el) => el.id !== selectedCity.id
-    );
+  handleDeleteItem = (item) => {
+    const yourNextList = this.state.list.filter((el) => el.id !== item.id);
 
     this.setState((prevState) => {
       return {
@@ -183,7 +182,7 @@ class Cities extends Component {
       return {
         ...prevState,
         isEditModalOpen: true,
-        selectedCity: {
+        selectedItem: {
           id: data.id,
           name: data.name,
         },
@@ -196,7 +195,7 @@ class Cities extends Component {
       return {
         ...prevState,
         isDeleteModalOpen: true,
-        selectedCity: {
+        selectedItem: {
           id: data.id,
           name: data.name,
         },
@@ -204,11 +203,10 @@ class Cities extends Component {
     });
   };
 
-  // handle add city
-  handleAddCity = (addedCity) => {
+  handleAddItem = (item) => {
     const list = this.state.list.sort((a, b) => a.id > b.id);
 
-    if (list.find((el) => el.name === addedCity.name)) {
+    if (list.find((el) => el.name === item.name)) {
       this.setState({
         errors: "A city with the same name already exists.",
       });
@@ -216,11 +214,11 @@ class Cities extends Component {
       return;
     }
 
-    const newId = list.length > 0 ? list[list.length - 1].id : 0;
+    const newId = list.length > 0 ? list[list.length - 1].id + 1 : 0;
 
     const itemToAdd = {
       id: newId,
-      name: addedCity.name,
+      name: item.name,
     };
 
     this.setState((prevState) => {
@@ -239,13 +237,12 @@ class Cities extends Component {
       );
     }
 
-    return list.map((city) => (
-      <div key={city.id} className={`box relative ${styles.citiesListItem}`}>
-        <span>{city.name}</span>
+    return list.map((item) => (
+      <div key={item.id} className={`box relative ${styles.listItem}`}>
+        <span>{item.name}</span>
         <Dropdown
-          cityId={city.id}
-          onEdit={() => this.showEditModal(city)}
-          onDelete={() => this.showDeleteModal(city)}
+          onEdit={() => this.showEditModal(item)}
+          onDelete={() => this.showDeleteModal(item)}
         />
       </div>
     ));

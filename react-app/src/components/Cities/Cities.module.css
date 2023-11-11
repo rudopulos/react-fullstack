@@ -1,10 +1,10 @@
-.citiesList {
+.itemsList {
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
 }
 
-.citiesListItem {
+.listItem {
   display: flex;
   width: 370px;
   align-items: center;

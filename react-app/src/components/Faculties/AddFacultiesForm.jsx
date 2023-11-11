@@ -6,7 +6,7 @@ export default class AddFacultiesForm extends Component {
   static propTypes = { onFormSubmit: PropTypes.func };
 
   state = {
-    faculty: "",
+    name: "",
   };
 
   handleSubmit = (e) => {
@@ -18,11 +18,11 @@ export default class AddFacultiesForm extends Component {
   handleChange = (evt) => {
     const { value } = evt.target;
 
-    this.setState({ faculty: value });
+    this.setState({ name: value });
   };
 
   render() {
-    const { faculty } = this.state;
+    const { name } = this.state;
 
     return (
       <form className="form" onSubmit={this.handleSubmit}>
@@ -30,8 +30,8 @@ export default class AddFacultiesForm extends Component {
         <label>
           <span>Name</span>
           <input
-            value={faculty}
-            name="faculty"
+            value={name}
+            name="name"
             type="text"
             placeholder="Faculty"
             onChange={this.handleChange}
