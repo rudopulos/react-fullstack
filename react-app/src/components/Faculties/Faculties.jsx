@@ -8,6 +8,8 @@ import Modal from "../common/Modal/Modal";
 import ErrorAlert from "../common/ErrorAlert";
 import AlternateButton from "../common/Button/AlternateButton";
 
+const FACULTIES_KEY = "faculties";
+
 class Faculties extends Component {
   state = {
     isAddFormVisible: false,
@@ -18,17 +20,28 @@ class Faculties extends Component {
       id: 0,
       name: "",
     },
-    list: [
-      {
-        id: 0,
-        name: "Faculty of Automation",
-      },
-      {
-        id: 1,
-        name: "Faculty of Mathematics Francisco",
-      },
-    ],
+    list: [],
   };
+
+  async componentDidMount() {
+    const data = localStorage.getItem(FACULTIES_KEY);
+
+    try {
+      if (data) {
+        this.setState({
+          list: JSON.parse(data),
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  componentDidUpdate(_prevProps, prevState) {
+    if (prevState?.list.length !== this.state.list) {
+      localStorage.setItem(FACULTIES_KEY, JSON.stringify(this.state.list));
+    }
+  }
 
   render() {
     const {
@@ -89,7 +102,7 @@ class Faculties extends Component {
           <Modal
             isOpen={isDeleteModalOpen}
             handleClose={() => {
-              this.setState({ isEditModalOpen: false });
+              this.setState({ isDeleteModalOpen: false });
             }}
             header={{
               icon: <Icon variant={"handpointing"} size={40} />,

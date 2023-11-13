@@ -11,6 +11,27 @@ export default class Modal extends Component {
     children: PropTypes.node.isRequired,
   };
 
+  constructor(props) {
+    super(props);
+    // Adaug scope-ul clasei Modal, care imi ofera acces la props si state
+    this.handleEscape = this.handleEscape.bind(this);
+  }
+
+  handleEscape(event) {
+    if (event.key === "Escape") {
+      console.log("Escape a fost apasat");
+      this.props.handleClose();
+    }
+  }
+
+  componentDidMount() {
+    document.addEventListener("keydown", this.handleEscape, false);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener("keydown", this.handleEscape, false);
+  }
+
   render() {
     const { isOpen, handleClose, header, children } = this.props;
 

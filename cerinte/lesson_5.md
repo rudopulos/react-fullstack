@@ -1,4 +1,4 @@
-# Lesson  №5
+# Lesson №5
 
 ## Life cycle
 
@@ -14,6 +14,18 @@ All collections of tutors, cities, faculties are stored in localStorage
 
 Read all collections of tutors, cities, faculties from localStorage on first page load
 
+```javascript
+async componentDidMount() {
+    const data = await localStorage.getItem('key')
+
+    if(data) {
+        this.setState({
+            ...data
+        })
+    }
+}
+```
+
 ### Task №4
 
-For editing and deleting modals, add the ability to close using the ```ESC``` button
+For editing and deleting modals, add the ability to close using the `ESC` button

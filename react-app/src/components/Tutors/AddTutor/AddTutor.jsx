@@ -24,6 +24,14 @@ export default class AddTutor extends Component {
     this.setState({ [name]: value });
   };
 
+  componentDidMount() {
+    console.log("AddTutor Form a fost montat");
+  }
+
+  componentWillUnmount() {
+    console.log("AddTutor Form va fi sters din DOM");
+  }
+
   render() {
     const { surname, name, phone, email, city } = this.state;
 

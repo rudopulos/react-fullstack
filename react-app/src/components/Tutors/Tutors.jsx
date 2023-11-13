@@ -5,22 +5,34 @@ import AddTutor from "./AddTutor/AddTutor";
 import Button from "../common/Button/Button";
 import SearchBar from "../common/SearchBar/SearchBar";
 
+const TUTORS_KEY = "tutors";
+
 class Tutors extends Component {
   state = {
     searchTerm: "",
     isAddFormVisible: false,
-    list: [
-      {
-        id: 0,
-        firstName: "John",
-        lastName: "Smith",
-        telephone: "07123456",
-        email: "johnsmith@company.com",
-        city: "Paris",
-        role: "Administrator",
-      },
-    ],
+    list: [],
   };
+
+  async componentDidMount() {
+    const data = localStorage.getItem(TUTORS_KEY);
+
+    try {
+      if (data) {
+        this.setState({
+          list: JSON.parse(data),
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  componentDidUpdate(_prevProps, prevState) {
+    if (prevState?.list.length !== this.state.list) {
+      localStorage.setItem(TUTORS_KEY, JSON.stringify(this.state.list));
+    }
+  }
 
   render() {
     const { isAddFormVisible, list, searchTerm } = this.state;
@@ -90,6 +102,11 @@ class Tutors extends Component {
 
   // Render the list of tutors
   renderList = (items) => {
+    console.dir(items);
+    if (!items || !Array.isArray(items)) {
+      return <>Loading...</>;
+    }
+
     if (items.length === 0) {
       const hasSearchTerm = this.state.searchTerm.length > 0;
 

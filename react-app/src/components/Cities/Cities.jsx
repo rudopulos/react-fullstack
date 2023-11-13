@@ -8,6 +8,8 @@ import Modal from "../common/Modal/Modal";
 import ErrorAlert from "../common/ErrorAlert";
 import AlternateButton from "../common/Button/AlternateButton";
 
+const CITIES_KEY = "cities";
+
 class Cities extends Component {
   state = {
     isAddFormVisible: false,
@@ -18,17 +20,28 @@ class Cities extends Component {
       id: 0,
       name: "",
     },
-    list: [
-      {
-        id: 0,
-        name: "San Francisco",
-      },
-      {
-        id: 1,
-        name: "New York",
-      },
-    ],
+    list: [],
   };
+
+  async componentDidMount() {
+    const data = localStorage.getItem(CITIES_KEY);
+
+    try {
+      if (data) {
+        this.setState({
+          list: JSON.parse(data),
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  componentDidUpdate(_prevProps, prevState) {
+    if (prevState?.list.length !== this.state.list) {
+      localStorage.setItem(CITIES_KEY, JSON.stringify(this.state.list));
+    }
+  }
 
   render() {
     const {
@@ -89,7 +102,7 @@ class Cities extends Component {
           <Modal
             isOpen={isDeleteModalOpen}
             handleClose={() => {
-              this.setState({ isEditModalOpen: false });
+              this.setState({ isDeleteModalOpen: false });
             }}
             header={{
               icon: <Icon variant={"handpointing"} size={40} />,
