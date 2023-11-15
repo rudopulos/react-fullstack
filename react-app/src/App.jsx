@@ -5,6 +5,7 @@ import Sidebar from "./components/Sidebar/Sidebar.component.jsx";
 import University from "./components/University/University.component.jsx";
 import Cities from "./components/Cities/Cities.jsx";
 import Faculties from "./components/Faculties/Faculties.jsx";
+// import Test from "./components/Test.jsx";
 
 class App extends Component {
   render() {
@@ -19,6 +20,8 @@ class App extends Component {
         </section>
       </main>
     );
+
+    // return <Test />;
   }
 }
 

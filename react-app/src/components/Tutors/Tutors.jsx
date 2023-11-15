@@ -4,27 +4,40 @@ import Icon from "../common/Icon/Icon";
 import AddTutor from "./AddTutor/AddTutor";
 import Button from "../common/Button/Button";
 import SearchBar from "../common/SearchBar/SearchBar";
+import tutorsService from "../../service/tutorsService";
+import Loading from "../common/Loading/Loading";
+import Error from "../common/Error/Error";
 
 const TUTORS_KEY = "tutors";
 
 class Tutors extends Component {
+  constructor(props) {
+    super(props);
+    // Adaug scope-ul clasei Modal, care imi ofera acces la props si state
+    this.renderList = this.renderList.bind(this);
+    this.renderTutors = this.renderTutors.bind(this);
+  }
+
   state = {
     searchTerm: "",
     isAddFormVisible: false,
     list: [],
+    isLoading: false,
+    error: "",
   };
 
   async componentDidMount() {
-    const data = localStorage.getItem(TUTORS_KEY);
-
     try {
-      if (data) {
-        this.setState({
-          list: JSON.parse(data),
-        });
-      }
+      this.setState({ isLoading: true });
+      const response = await tutorsService.get();
+      this.setState({ list: response });
     } catch (error) {
+      this.setState({
+        error: "A aparut o eroare la obtinerea listei de tutori.",
+      });
       console.error(error);
+    } finally {
+      this.setState({ isLoading: false });
     }
   }
 
@@ -35,11 +48,7 @@ class Tutors extends Component {
   }
 
   render() {
-    const { isAddFormVisible, list, searchTerm } = this.state;
-    const filteredList =
-      searchTerm.length > 0
-        ? list.filter((el) => el.firstName.includes(searchTerm))
-        : list;
+    const { error } = this.state;
 
     return (
       <section className="section">
@@ -47,11 +56,29 @@ class Tutors extends Component {
           <Icon variant="cat" label="Tutors" />
           <span>Tutors</span>
         </h2>
+        {error.length > 0 && <Error message={error} />}
+        {!error && this.renderTutors()}
+      </section>
+    );
+  }
+
+  renderTutors() {
+    const { list, isAddFormVisible, isLoading, searchTerm } = this.state;
+
+    const filteredList =
+      searchTerm.length > 0
+        ? list.filter((el) => el.firstName.includes(searchTerm))
+        : list;
+
+    return (
+      <>
         <div className={`box ${styles.tutorsList}`}>
           {this.renderList(filteredList)}
         </div>
 
         {isAddFormVisible && <AddTutor onFormSubmit={this.handleAddTutor} />}
+
+        {isLoading && <Loading />}
 
         <SearchBar
           handleChange={(evt) => {
@@ -71,38 +98,12 @@ class Tutors extends Component {
             Add Tutor
           </Button>
         </div>
-      </section>
+      </>
     );
   }
 
-  // handle add tutor
-  handleAddTutor = (data) => {
-    const newId =
-      this.state.list.length > 0
-        ? this.state.list[this.state.list.length - 1].id
-        : 0;
-
-    const tutorToAdd = {
-      id: newId,
-      firstName: data.name,
-      lastName: data.surname,
-      telephone: data.phone,
-      email: data.email,
-      city: data.city,
-      role: "Member",
-    };
-
-    this.setState((prevState) => {
-      return {
-        list: [...prevState.list, tutorToAdd],
-        isAddFormVisible: false,
-      };
-    });
-  };
-
   // Render the list of tutors
-  renderList = (items) => {
-    console.dir(items);
+  renderList(items) {
     if (!items || !Array.isArray(items)) {
       return <>Loading...</>;
     }
@@ -131,6 +132,31 @@ class Tutors extends Component {
           <div>{el.role}</div>
         </div>
       );
+    });
+  }
+
+  // handle add tutor
+  handleAddTutor = (data) => {
+    const newId =
+      this.state.list.length > 0
+        ? this.state.list[this.state.list.length - 1].id
+        : 0;
+
+    const tutorToAdd = {
+      id: newId,
+      firstName: data.name,
+      lastName: data.surname,
+      telephone: data.phone,
+      email: data.email,
+      city: data.city,
+      role: "Member",
+    };
+
+    this.setState((prevState) => {
+      return {
+        list: [...prevState.list, tutorToAdd],
+        isAddFormVisible: false,
+      };
     });
   };
 }

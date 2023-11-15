@@ -1,0 +1,20 @@
+{
+  "tutors": [
+    {
+      "id": 0,
+      "firstName": "Stephen",
+      "lastName": "Smith",
+      "telephone": "123456",
+      "email": "john@smith.com",
+      "city": "New York",
+      "role": "Member"
+    }
+  ],
+  "cities": [
+    {
+      "id": 2,
+      "name": "New York"
+    }
+  ],
+  "faculties": []
+}

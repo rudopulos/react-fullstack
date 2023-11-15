@@ -7,15 +7,25 @@ import Dropdown from "../common/Dropdown/Dropdown";
 import Modal from "../common/Modal/Modal";
 import ErrorAlert from "../common/ErrorAlert";
 import AlternateButton from "../common/Button/AlternateButton";
+import citiesService from "../../service/citiesService";
 
 const CITIES_KEY = "cities";
 
 class Cities extends Component {
+  constructor(props) {
+    super(props);
+    // Adaug scope-ul clasei Modal, care imi ofera acces la props si state
+    this.handleAddItem = this.handleAddItem.bind(this);
+    this.handleDeleteItem = this.handleDeleteItem.bind(this);
+    this.handleEditItem = this.handleEditItem.bind(this);
+  }
+
   state = {
     isAddFormVisible: false,
     isEditModalOpen: false,
+    isLoading: false,
     isDeleteModalOpen: false,
-    errors: "",
+    error: "",
     selectedItem: {
       id: 0,
       name: "",
@@ -24,16 +34,17 @@ class Cities extends Component {
   };
 
   async componentDidMount() {
-    const data = localStorage.getItem(CITIES_KEY);
-
     try {
-      if (data) {
-        this.setState({
-          list: JSON.parse(data),
-        });
-      }
+      this.setState({ isLoading: true });
+      const response = await citiesService.get();
+      this.setState({ list: response });
     } catch (error) {
+      this.setState({
+        error: "A aparut o eroare la obtinerea listei de orase.",
+      });
       console.error(error);
+    } finally {
+      this.setState({ isLoading: false });
     }
   }
 
@@ -47,7 +58,7 @@ class Cities extends Component {
     const {
       isAddFormVisible,
       list,
-      errors,
+      error,
       isEditModalOpen,
       isDeleteModalOpen,
       selectedItem,
@@ -136,7 +147,7 @@ class Cities extends Component {
           <AddCitiesForm onFormSubmit={this.handleAddItem} />
         )}
 
-        {errors.length > 0 && <ErrorAlert errors={errors} />}
+        {error.length > 0 && <ErrorAlert errors={error} />}
 
         <div className={"mt-16"}>
           <Button
@@ -153,12 +164,12 @@ class Cities extends Component {
     );
   }
 
-  handleEditItem = (editedItem) => {
+  async handleEditItem(editedItem) {
     const yourNextList = [...this.state.list];
 
     if (yourNextList.find((el) => el.name === editedItem.name)) {
       this.setState({
-        errors: "A city with the same name already exists.",
+        error: "A city with the same name already exists.",
       });
 
       return;
@@ -167,28 +178,40 @@ class Cities extends Component {
     const item = yourNextList.find((el) => el.id === editedItem.id);
     item.name = editedItem.name;
 
-    this.setState((prevState) => {
-      return {
-        ...prevState,
-        errors: "",
-        isEditModalOpen: false,
-        list: yourNextList,
-      };
-    });
-  };
+    try {
+      await citiesService.update(editedItem.id, editedItem);
+      this.setState((prevState) => {
+        return {
+          ...prevState,
+          error: "",
+          isEditModalOpen: false,
+          list: yourNextList,
+        };
+      });
+    } catch (error) {
+      this.setState({
+        error: "Nu a putut fi modificat orasul",
+      });
+    }
+  }
 
-  handleDeleteItem = (item) => {
+  async handleDeleteItem(item) {
     const yourNextList = this.state.list.filter((el) => el.id !== item.id);
 
-    this.setState((prevState) => {
-      return {
-        ...prevState,
-        errors: "",
-        isDeleteModalOpen: false,
-        list: yourNextList,
-      };
-    });
-  };
+    try {
+      await citiesService.remove(item.id);
+      this.setState((prevState) => {
+        return {
+          ...prevState,
+          error: "",
+          isDeleteModalOpen: false,
+          list: yourNextList,
+        };
+      });
+    } catch (error) {
+      this.setState({ error: error.message });
+    }
+  }
 
   showEditModal = (data) => {
     this.setState((prevState) => {
@@ -216,12 +239,12 @@ class Cities extends Component {
     });
   };
 
-  handleAddItem = (item) => {
+  async handleAddItem(item) {
     const list = this.state.list.sort((a, b) => a.id > b.id);
 
     if (list.find((el) => el.name === item.name)) {
       this.setState({
-        errors: "A city with the same name already exists.",
+        error: "A city with the same name already exists.",
       });
 
       return;
@@ -234,14 +257,22 @@ class Cities extends Component {
       name: item.name,
     };
 
-    this.setState((prevState) => {
-      return {
-        errors: "",
-        list: [...prevState.list, itemToAdd],
-        isAddFormVisible: false,
-      };
-    });
-  };
+    try {
+      await citiesService.create(itemToAdd);
+
+      this.setState((prevState) => {
+        return {
+          error: "",
+          list: [...prevState.list, itemToAdd],
+          isAddFormVisible: false,
+        };
+      });
+    } catch (error) {
+      this.setState({
+        error: "Nu a putut fi creat orasul.",
+      });
+    }
+  }
 
   renderList(list) {
     if (!list || list.length === 0) {
